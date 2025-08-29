@@ -13,20 +13,17 @@ from bs4 import BeautifulSoup
 import logging
 from urllib.parse import urljoin
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-# ========== Setup Paths ==========
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 os.makedirs(DATA_DIR, exist_ok=True)
 
-# ========== Constants ==========
-SEASONS = list(range(2000, 2025))  # Past 10 seasons (2015-16 to 2024-25)
+SEASONS = list(range(2000, 2025)) 
 BASE_URL = "https://fbref.com"
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -64,7 +61,7 @@ def scrape_with_requests(url, session=None, max_retries=3):
     for attempt in range(max_retries):
         try:
             logger.info(f"Attempt {attempt + 1}: {url}")
-            time.sleep(random.uniform(2, 4))  # Reduced delay
+            time.sleep(random.uniform(2, 4))  
             response = session.get(url, timeout=30)
             response.raise_for_status()
             
@@ -84,23 +81,17 @@ def scrape_with_requests(url, session=None, max_retries=3):
 def find_fixtures_table(soup):
     """Find the fixtures table in the page"""
     logger.info("Looking for fixtures table...")
-    
-    # Try to find by ID first (FBref uses specific IDs for their tables)
     table = soup.find('table', id=lambda x: x and 'sched' in x.lower())
     if table:
         logger.info("Found fixtures table by ID")
         return table
-        
-    # Try to find by class or other attributes
     for table in soup.find_all('table'):
         if table.has_attr('class') and any('sched' in c.lower() for c in table['class']):
             logger.info("Found fixtures table by class")
             return table
-            
-    # Fallback: find any table with match data
     for table in soup.find_all('table'):
         rows = table.find_all('tr')
-        if len(rows) > 5:  # Reasonable number of rows
+        if len(rows) > 5:
             first_row = rows[0]
             headers = [th.get_text(strip=True).lower() for th in first_row.find_all(['th', 'td'])]
             if 'date' in headers and any(x in headers for x in ['home', 'away']) and 'score' in headers:
@@ -127,10 +118,7 @@ def parse_date(date_str):
         return ''
         
     date_str = date_str.strip()
-    
-    # Try to extract date from various formats
     try:
-        # Handle month names in different languages
         month_replacements = {
             'ene': 'jan', 'feb': 'feb', 'mar': 'mar', 'abr': 'apr', 'may': 'may', 'jun': 'jun',
             'jul': 'jul', 'ago': 'aug', 'sep': 'sep', 'oct': 'oct', 'nov': 'nov', 'dic': 'dec'
@@ -138,8 +126,6 @@ def parse_date(date_str):
         
         for esp, eng in month_replacements.items():
             date_str = date_str.lower().replace(esp, eng)
-            
-        # Try different date formats
         for fmt in ('%Y-%m-%d', '%d/%m/%Y', '%d %b %Y', '%b %d, %Y', '%d %B %Y', '%B %d, %Y'):
             try:
                 parsed_date = pd.to_datetime(date_str, format=fmt)
@@ -156,11 +142,7 @@ def parse_score(score_str):
     """Parse score string into home and away goals"""
     if not score_str:
         return None, None
-        
-    # Replace various dash characters with standard hyphen
     score_str = score_str.replace('−', '-').replace('–', '-').replace(':', '-').replace('‒', '-').replace('—', '-')
-    
-    # Extract numbers from score
     score_parts = re.findall(r'\d+', score_str)
     if len(score_parts) >= 2:
         try:
@@ -210,8 +192,6 @@ def scrape_season_fixtures(season, session=None):
     if not rows:
         logger.error("No rows found in fixtures table")
         return []
-        
-    # Identify column indices
     headers = [th.get_text(strip=True).lower() for th in rows[0].find_all(['th', 'td'])]
     logger.info(f"Table headers: {headers}")
     
@@ -231,23 +211,22 @@ def scrape_season_fixtures(season, session=None):
             col_map['attendance'] = i
         elif 'venue' in header:
             col_map['venue'] = i
-            
-    # If we couldn't identify key columns, make educated guesses
+
     if 'home' not in col_map:
         for i, header in enumerate(headers):
             if header in ['squad', 'team'] and 'home' not in col_map:
                 col_map['home'] = i
             elif header in ['squad', 'team'] and 'home' in col_map:
                 col_map['away'] = i
-                
-    # Process each row
+
+
     for row_idx, row in enumerate(rows[1:], 1):
         cells = row.find_all(['td', 'th'])
         if len(cells) < max(col_map.values()) + 1:
             continue
             
         try:
-            # Get the column indices based on our mapping
+
             date_idx = col_map.get('date', 0)
             time_idx = col_map.get('time', 1)
             home_idx = col_map.get('home', 2)
@@ -267,13 +246,13 @@ def scrape_season_fixtures(season, session=None):
                 'attendance': cells[attendance_idx].get_text(strip=True) if attendance_idx < len(cells) else ''
             }
             
-            # Parse score and determine result
+
             home_goals, away_goals = parse_score(match_data['score'])
             match_data['home_goals'] = home_goals
             match_data['away_goals'] = away_goals
             match_data['result'] = determine_result(home_goals, away_goals)
             
-            # Skip invalid rows
+
             if (not match_data['home_team'] or not match_data['away_team'] or 
                 len(match_data['home_team']) < 2 or len(match_data['away_team']) < 2):
                 continue
@@ -303,7 +282,6 @@ def main():
     all_matches = []
     session = create_session()
 
-    # Scrape each season
     for i, season in enumerate(SEASONS):
         logger.info(f"Processing season {season}-{season+1} ({i+1}/{len(SEASONS)})")
         
@@ -324,11 +302,10 @@ def main():
         logger.error("No matches were collected")
         return
         
-    # Save data to CSV
+
     logger.info(f"Saving data for {len(all_matches)} matches...")
     df = pd.DataFrame(all_matches)
     
-    # Reorder columns for better readability
     columns = ['season', 'date', 'time', 'home_team', 'away_team', 'home_goals', 'away_goals', 
                'score', 'result', 'venue', 'attendance']
     df = df[[col for col in columns if col in df.columns]]
@@ -336,23 +313,20 @@ def main():
     csv_path = os.path.join(DATA_DIR, 'la_liga_results_10_years.csv')
     df.to_csv(csv_path, index=False, encoding='utf-8')
     logger.info(f"Data saved to: {csv_path}")
-    
-    # Print summary
+
     logger.info("\n=== SCRAPING SUMMARY ===")
     logger.info(f"Total matches: {len(df)}")
     
     if len(df) > 0:
-        # Results distribution
+        
         result_counts = df['result'].value_counts()
         for result, count in result_counts.items():
             logger.info(f"{result}: {count} matches ({count/len(df)*100:.1f}%)")
-            
-        # Latest season in data
+
         latest_season = df['season'].max()
         latest_season_matches = df[df['season'] == latest_season]
         logger.info(f"\nLatest season ({latest_season}): {len(latest_season_matches)} matches")
-        
-        # Show a few sample matches
+
         logger.info("\nSample matches:")
         for i, row in df.head(3).iterrows():
             logger.info(f"{row['date']}: {row['home_team']} {row['home_goals']}-{row['away_goals']} {row['away_team']} ({row['result']})")
