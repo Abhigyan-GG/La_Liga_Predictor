@@ -1,8 +1,3 @@
-"""
-La Liga Match Results Scraper from FBref
-Focuses on basic match data: teams, scores, winners
-"""
-
 import os
 import time
 import pandas as pd
@@ -23,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 os.makedirs(DATA_DIR, exist_ok=True)
 
-SEASONS = list(range(2000, 2025)) 
+SEASONS = list(range(2000, 2026))
 BASE_URL = "https://fbref.com"
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -37,7 +32,7 @@ def get_random_user_agent():
 
 def get_fixtures_url(season):
     """Get the URL for La Liga fixtures for a specific season"""
-    if season == 2024:
+    if season == (list[range(2000, 2026)]):
         return "https://fbref.com/en/comps/12/schedule/La-Liga-Scores-and-Fixtures"
     else:
         season_str = f"{season}-{season+1}"
@@ -310,7 +305,7 @@ def main():
                'score', 'result', 'venue', 'attendance']
     df = df[[col for col in columns if col in df.columns]]
     
-    csv_path = os.path.join(DATA_DIR, 'la_liga_results_10_years.csv')
+    csv_path = os.path.join(DATA_DIR, 'LaLiga.csv')
     df.to_csv(csv_path, index=False, encoding='utf-8')
     logger.info(f"Data saved to: {csv_path}")
 

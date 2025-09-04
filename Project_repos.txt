@@ -1,0 +1,16 @@
+LaLiga_Predictor/
+├── utils/
+│   ├── __init__.py
+│   ├── data_processor.py
+│   ├── feature_engineer.py
+│   ├── evaluate_model.py
+│   ├── predict.py
+│   └── train_model.py
+├── data/
+│   ├── Drop.py
+│   ├── future_matches.csv
+│   └── LaLiga.csv
+├── Scraper/
+│   └── Scraper.py
+└── vscode/
+    └── settings.json
