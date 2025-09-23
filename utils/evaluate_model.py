@@ -511,13 +511,13 @@ class ModelEvaluator:
 
 # Example usage
 if __name__ == "__main__":
-    evaluator = AdvancedModelEvaluator(
+    evaluator = ModelEvaluator(
         data_path='data/LaLiga.csv',
         models_path='models/'
     )
-    
+
     results = evaluator.generate_comprehensive_report()
-    
+
     print("\n" + "="*60)
     print("EVALUATION SUMMARY")
     print("="*60)

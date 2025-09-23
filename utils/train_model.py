@@ -186,7 +186,8 @@ class AdvancedModelTrainer:
 
         # Engineer features
         self.feature_engineer = FeatureEngineer(data)
-        X, y_home, y_away, y_result = self.feature_engineer.create_team_features()
+        # FeatureEngineer defines create_advanced_features() — use that to build features/targets
+        X, y_home, y_away, y_result = self.feature_engineer.create_advanced_features()
 
         # Split past vs future
         is_past = ~(np.isnan(y_home) | np.isnan(y_away) | np.isnan(y_result))
