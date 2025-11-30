@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Teams - La Liga Predictions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#ec131e",
+              "background-light": "#f8f6f6",
+              "background-dark": "#221011",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="flex items-center justify-between whitespace-nowrap border-b border-solid border-black/10 dark:border-white/10 px-4 sm:px-8 md:px-10 lg:px-20 xl:px-40 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-slate-900 dark:text-white">
+<div class="size-6 text-primary">
+<svg fill="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.5v-3H8.5v-3H11v-2c0-1.65 1.35-3 3-3h2.5v3H14c-.55 0-1 .45-1 1v1h2.5l-.5 3H13v3h-2z"></path>
+</svg>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">La Liga Predictions</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Home</a>
+<a class="text-primary dark:text-primary text-sm font-bold leading-normal" href="#">Teams</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Fixtures</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Predictions</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Stats</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end items-center gap-4">
+<label class="hidden sm:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-400 dark:text-slate-500 flex bg-slate-100 dark:bg-slate-800 items-center justify-center pl-3 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-slate-100 dark:bg-slate-800 focus:border-none h-full placeholder:text-slate-400 dark:placeholder:text-slate-500 px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal" placeholder="Search" value=""/>
+</div>
+</label>
+<div class="flex gap-2">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Sign Up</span>
+</button>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Log In</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="flex flex-1 justify-center px-4 sm:px-8 md:px-10 lg:px-20 xl:px-40 py-5">
+<div class="flex flex-col w-full max-w-[960px] flex-1 gap-6">
+<!-- Breadcrumbs -->
+<div class="flex flex-wrap gap-2 py-4">
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Home</a>
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">/</span>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Teams</a>
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">/</span>
+<span class="text-slate-900 dark:text-white text-sm font-medium leading-normal">Real Madrid</span>
+</div>
+<!-- ProfileHeader -->
+<div class="flex p-4 @container border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900/50">
+<div class="flex w-full flex-col gap-4 @[520px]:flex-row @[520px]:justify-between @[520px]:items-center">
+<div class="flex gap-4 items-center">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg min-h-24 w-24" data-alt="Real Madrid team crest" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCJsKDxGkTRSr9hT2SQdiupDHDL3dnvHC7sEc5rw9ZRFpN5t2tw-TVhzb31Krfj-AtYTnEia5rN-NQ4w6sKI-himydBvGzB_o-xcsctYyHRTvDM68nF5MZibsi1zr3C24E-zdNZvRVLV9lkVxIOSOFuHkxLs14m0wcfBkrL_7gTdY_7xCxqKvyDslD0iyotUozLwBP4-iiRSvYijwafiy0l9rJPQfGpPagQKIjG12eJQk0UlHXeEamVju3mOf8yBjcLC9N0BMjoTFuB");'></div>
+<div class="flex flex-col">
+<p class="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-[-0.015em]">Real Madrid C.F.</p>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">La Liga / Santiago Bernabéu</p>
+</div>
+</div>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white text-sm font-bold leading-normal tracking-[0.015em] w-full max-w-[480px] @[480px]:w-auto">
+<span class="material-symbols-outlined mr-2 text-base">notifications</span>
+<span class="truncate">Follow Team</span>
+</button>
+</div>
+</div>
+<!-- Tabs -->
+<div>
+<div class="flex border-b border-slate-200 dark:border-slate-800 gap-8">
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-primary pb-[13px] pt-4" href="#">
+<p class="text-primary text-sm font-bold leading-normal tracking-[0.015em]">Overview</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary pb-[13px] pt-4" href="#">
+<p class="font-bold leading-normal tracking-[0.015em] text-sm">Squad</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary pb-[13px] pt-4" href="#">
+<p class="font-bold leading-normal tracking-[0.015em] text-sm">Fixtures &amp; Results</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary pb-[13px] pt-4" href="#">
+<p class="font-bold leading-normal tracking-[0.015em] text-sm">Stats</p>
+</a>
+</div>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="flex flex-col gap-2 rounded-lg p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
+<p class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal">League Position</p>
+<p class="text-slate-900 dark:text-white tracking-light text-3xl font-bold leading-tight">1st</p>
+<p class="text-green-500 text-sm font-medium leading-normal">+0 Places</p>
+</div>
+<div class="flex flex-col gap-2 rounded-lg p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
+<p class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal">Wins</p>
+<p class="text-slate-900 dark:text-white tracking-light text-3xl font-bold leading-tight">29</p>
+<p class="text-green-500 text-sm font-medium leading-normal">+5% vs last season</p>
+</div>
+<div class="flex flex-col gap-2 rounded-lg p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
+<p class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal">Losses</p>
+<p class="text-slate-900 dark:text-white tracking-light text-3xl font-bold leading-tight">1</p>
+<p class="text-red-500 text-sm font-medium leading-normal">-2% vs last season</p>
+</div>
+<div class="flex flex-col gap-2 rounded-lg p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
+<p class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal">Goals For</p>
+<p class="text-slate-900 dark:text-white tracking-light text-3xl font-bold leading-tight">87</p>
+<p class="text-green-500 text-sm font-medium leading-normal">+8% vs last season</p>
+</div>
+</div>
+<!-- Fixtures and Form Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 flex flex-col gap-4">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Fixtures &amp; Results</h3>
+<div class="flex flex-col gap-2">
+<!-- Upcoming Match -->
+<div class="flex items-center justify-between p-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-4 text-sm font-medium text-slate-600 dark:text-slate-400">
+<span>25 May</span>
+<span>-</span>
+<span>20:00</span>
+</div>
+<div class="flex items-center justify-center gap-4 text-slate-900 dark:text-white font-bold text-base flex-1">
+<span class="text-right">Real Madrid</span>
+<img alt="Real Madrid crest" class="h-6 w-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAunPt8qpQ4P9qCwihQpdwbIzi6rvna_qW4x6WvZyEmX2rBQ8OK0miEhv19pusvPQgaTYCrrOKWAYKFVB4CuCsmTqQHHkf-I9HURoDS0rcqjSHBjzd0lTHfoDRrUn5nCLywx1fqarlWhzzCh3VXgRqRRac1upmDBR0sC5y7k2DmlxzJUNcd4oZuJ7ToBPKIRm0KUN12fKgB4qJdRxb6gNkclsnRupLTCEDKRwKaDZZcfbxPo6xG1DbVm80w-h_taQhRGqfl8ey_wkzw"/>
+<span>vs</span>
+<img alt="Real Betis crest" class="h-6 w-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsfLDZV1iNc53umkCkJj2PbYd4wMlrMLQutk331qc571jz-f-1N55IS-qB1k6Plodw7w5yOmPLCfgVpG3igk3pl8upMVOT7TYFALB59PEHTM5IJwM2gBI1w_1-yINs30aNq00wVS2bZRXw8M6xmEHRaPWFWZoWa0c2iOmW_mLWRyG0RDRace-qpvuhNIDE5Oy9j3ll4zXP2He8oAL0oVbRjt3RGcbSnvdDuvpqovDZD-cM2XHbaYkY3yQgoRW47RQ9ArN37Bwk7ZEU"/>
+<span class="text-left">Real Betis</span>
+</div>
+<button class="flex items-center justify-center rounded-lg h-9 px-3 bg-primary text-white text-xs font-bold leading-normal tracking-wide">
+<span>Make Prediction</span>
+</button>
+</div>
+<!-- Result -->
+<div class="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-4 text-sm font-medium text-slate-500 dark:text-slate-400">
+<span>19 May</span>
+</div>
+<div class="flex items-center justify-center gap-4 text-slate-900 dark:text-white font-medium text-base flex-1">
+<span class="text-right">Villarreal</span>
+<img alt="Villarreal crest" class="h-6 w-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW-Qyp0j-I76GtA-3lakxT57A-OsXTDDs98IIpRSdGvRgA00r_Unz6gy21W5nQIj2xFLsjcI3-q4Wk-8jRvI19OhwCieZf1dKnR-lvayxfRPM8Yt8Ikm4w7ijKp0QJvSAYDRQKft2GRqr7CtYVi91h_ltER3D_x-MEBMw5SXgavMqAf4wCXxLjfqTLBFujWb23sgf_n-zUJz8JJcEy2UkIRan-8acqRQNebZLEyHuujQroCHRt6fizVr6GbSXZqfNEM2bcHc0wc8a0"/>
+<span class="font-bold text-lg">4 - 4</span>
+<img alt="Real Madrid crest" class="h-6 w-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4z_n1cD3a-VZ4lZTpPudj03dDjiwHprNr0JqyE0gbHXH5kzqo-12seLbPY_ut_svSlVK33plcqGvN8sdZGmeYo-bcWLYshrpwYrGLX_lyMqQMrXquGUWEJop9LrZdkpHWkXEs_OjPyojRUeXtGfikKXAOc7hgN7rF9vc9dcnr3rpK1XrWegzJ-uQHPSDOlqhU-aBCXbUWd5PRPCs2KAzHtHOWrE22vh2mM5msJb9kyvQItgyg31DR83f-V46b58CZl6occ2PbCFQc"/>
+<span class="text-left">Real Madrid</span>
+</div>
+<a class="text-primary text-xs font-bold" href="#">MATCH REPORT</a>
+</div>
+<!-- Result -->
+<div class="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-4 text-sm font-medium text-slate-500 dark:text-slate-400">
+<span>14 May</span>
+</div>
+<div class="flex items-center justify-center gap-4 text-slate-900 dark:text-white font-medium text-base flex-1">
+<span class="text-right">Real Madrid</span>
+<img alt="Real Madrid crest" class="h-6 w-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdwcG5Tr5mcbhA3LrBTUlO6YLrYKYsTe9NAf0fT-IHauCgJ8IkVMV_Pps4hozRzEE_RK5k4BWu-E1DbZfjA5MFLeJKaZv2WfSr2_FT9xi3lP4_VO_yqrcuhv1yURTA9TAuA7wOJ80yiTqgrKCoGkoWfhtb_i0amNJ3f_FQzby72oIOnDne3uA039NzFakVX4JN8MZS3JWxGBuIsNz5VZXVWDpyuzVB66N6ykNvTmUTBZOSZQQ04-aTj_oEh2xTZw371aJLCnKDlKEW"/>
+<span class="font-bold text-lg">5 - 0</span>
+<img alt="Alaves crest" class="h-6 w-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBi7MUv4Eij63arwmVOq_GVVOc5nqSI3YSChGzHOZaO0tfBZx6NrqAUQZu9WGVuN_IOVdPSvhEBUzYYrYZmRoqS1GN0QlZGL35p_SeX8AEx8D8wgDBCoG0-Ao8IVdOthehI9bGKjbX0DZ0oeTxDCZV-Yohoz0DGuQlPY0Zc2VlQjDFzzk6W09B_AAC6tKn12E2VYf9df7aZneLg6as09MME5eaq6szO0uWrozpFofhTDM25eg_AYDUFrhAA-XWzagpMTaxkd8rD5RG"/>
+<span class="text-left">Alavés</span>
+</div>
+<a class="text-primary text-xs font-bold" href="#">MATCH REPORT</a>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Recent Form</h3>
+<div class="flex flex-col gap-4 p-4 rounded-lg bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+<p class="text-sm text-slate-600 dark:text-slate-400">Last 5 Matches</p>
+<div class="flex items-center gap-2">
+<div class="flex items-center justify-center size-8 rounded-full bg-amber-500/20 text-amber-500 font-bold text-sm">D</div>
+<div class="flex items-center justify-center size-8 rounded-full bg-green-500/20 text-green-500 font-bold text-sm">W</div>
+<div class="flex items-center justify-center size-8 rounded-full bg-green-500/20 text-green-500 font-bold text-sm">W</div>
+<div class="flex items-center justify-center size-8 rounded-full bg-green-500/20 text-green-500 font-bold text-sm">W</div>
+<div class="flex items-center justify-center size-8 rounded-full bg-green-500/20 text-green-500 font-bold text-sm">W</div>
+</div>
+</div>
+<div class="flex flex-col gap-4 p-4 rounded-lg bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+<h4 class="font-bold text-slate-900 dark:text-white">Win/Draw/Loss</h4>
+<div class="flex items-center justify-center p-4">
+<!-- Dummy Chart -->
+<div class="relative w-32 h-32">
+<svg class="w-full h-full" viewbox="0 0 36 36">
+<path class="stroke-current text-slate-200 dark:text-slate-700" d="M18 2.0845
+                                            a 15.9155 15.9155 0 0 1 0 31.831
+                                            a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="4"></path>
+<path class="stroke-current text-green-500" d="M18 2.0845
+                                            a 15.9155 15.9155 0 0 1 0 31.831
+                                            a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="80, 100" stroke-linecap="round" stroke-width="4"></path>
+<path class="stroke-current text-amber-500" d="M18 2.0845
+                                            a 15.9155 15.9155 0 0 1 0 31.831
+                                            a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="15, 100" stroke-dashoffset="-80" stroke-linecap="round" stroke-width="4"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-xl font-bold text-slate-900 dark:text-white">37</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Matches</span>
+</div>
+</div>
+</div>
+<div class="flex justify-around text-xs">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-slate-600 dark:text-slate-300">Win (29)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-amber-500"></div>
+<span class="text-slate-600 dark:text-slate-300">Draw (7)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-red-500"></div>
+<span class="text-slate-600 dark:text-slate-300">Loss (1)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script src="/assets/app.js"></script>
+</body></html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Standings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#ec131e",
+              "background-light": "#f8f6f6",
+              "background-dark": "#221011",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-4 sm:px-8 md:px-12 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 dark:border-primary/20 px-4 md:px-10 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-gray-800 dark:text-white">
+<div class="size-8 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">La Liga Predictions</h2>
+</div>
+<nav class="hidden md:flex items-center gap-9">
+<a class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Home</a>
+<a class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Predictions</a>
+<a class="text-primary dark:text-primary text-sm font-bold leading-normal" href="#">Standings</a>
+<a class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Matches</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-gray-500 dark:text-gray-400 flex border border-r-0 border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 items-center justify-center pl-3 rounded-l-lg">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:border-primary/50 h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search" value=""/>
+</div>
+</label>
+</div>
+</header>
+<main class="flex-1">
+<div class="flex flex-wrap justify-between gap-3 p-4 py-8">
+<div class="flex min-w-72 flex-col gap-3">
+<h1 class="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">La Liga Standings 2023/2024</h1>
+<p class="text-gray-600 dark:text-gray-400 text-base font-normal leading-normal">Last updated: October 26, 2023, 10:00 PM GMT</p>
+</div>
+</div>
+<div class="px-4 py-3 @container">
+<div class="flex overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-background-light dark:bg-background-dark shadow-sm">
+<table class="flex-1 w-full text-left">
+<thead class="sticky top-0">
+<tr class="bg-gray-50 dark:bg-black/20">
+<th class="px-4 py-3 text-left text-gray-600 dark:text-gray-400 w-12 text-sm font-medium leading-normal">#</th>
+<th class="px-4 py-3 text-left text-gray-600 dark:text-gray-400 w-2/5 text-sm font-medium leading-normal">Club</th>
+<th class="px-4 py-3 text-center text-gray-600 dark:text-gray-400 text-sm font-medium leading-normal">P</th>
+<th class="px-4 py-3 text-center text-gray-600 dark:text-gray-400 text-sm font-medium leading-normal">W</th>
+<th class="px-4 py-3 text-center text-gray-600 dark:text-gray-400 text-sm font-medium leading-normal">D</th>
+<th class="px-4 py-3 text-center text-gray-600 dark:text-gray-400 text-sm font-medium leading-normal">L</th>
+<th class="hidden sm:table-cell px-4 py-3 text-center text-gray-600 dark:text-gray-400 text-sm font-medium leading-normal">GF</th>
+<th class="hidden sm:table-cell px-4 py-3 text-center text-gray-600 dark:text-gray-400 text-sm font-medium leading-normal">GA</th>
+<th class="hidden sm:table-cell px-4 py-3 text-center text-gray-600 dark:text-gray-400 text-sm font-medium leading-normal">GD</th>
+<th class="px-4 py-3 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">Pts</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+<tr class="hover:bg-gray-100 dark:hover:bg-white/5">
+<td class="h-[60px] px-4 py-2 text-gray-800 dark:text-gray-300 text-sm font-medium leading-normal border-l-4 border-green-500">1</td>
+<td class="h-[60px] px-4 py-2 text-gray-900 dark:text-white text-sm font-medium leading-normal flex items-center gap-3"><img alt="Real Madrid logo" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBx_6IwxRVvq0tzHo-6qEPM9blA6DAs_L3JHL072rAPtA-Sf76FNg-ljq_W7IUah5pxdtpXJja2iX13_tsD0fc_Xl_niCeAclFNnv9cEbHCWc2DiqPTIcRY1IHyitHG6Z3RdDx_n_fE9OSaB1RXGrdulLdq7gLzPFnoY2ZscKP0XWmiXMoRgP2xbvLrQfLvOdgW1_2C9gjlYbe6wzTId0L-Y7qzghqilTugTQYgssSKA_LwzzPqAEMDpZ3EAYsOKAzi0b05tUF9agiy"/>Real Madrid</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">8</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">1</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">1</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">21</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">7</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">14</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">25</td>
+</tr>
+<tr class="hover:bg-gray-100 dark:hover:bg-white/5">
+<td class="h-[60px] px-4 py-2 text-gray-800 dark:text-gray-300 text-sm font-medium leading-normal border-l-4 border-green-500">2</td>
+<td class="h-[60px] px-4 py-2 text-gray-900 dark:text-white text-sm font-medium leading-normal flex items-center gap-3"><img alt="Girona FC logo" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeq--41Sg9iQDrauvD3Z4B44XGMnan_qwBAOZSCR4_5Kzj2rUI2Uvo2q3Q9DObMI9JPGW6sMTYth830fbBm1AqI0UKu0WDlkahgiaD5J8Ij9x24fpay4K52Q8YvjDZyYOMYd1VIbm9bYP7V8C-I3Kbyk3ycYVlPs2R4BIolDXaaDZEX6ymjvlAncW8TdslE3ClswfBz5SKUww0QO73ZcbSmxhcQyQsTspMKYJeRtmOy4SA5sTHPIx8HAx34j8Luvtk7shTMFVx0giB"/>Girona FC</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">8</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">1</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">1</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">24</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">13</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">11</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">25</td>
+</tr>
+<tr class="hover:bg-gray-100 dark:hover:bg-white/5">
+<td class="h-[60px] px-4 py-2 text-gray-800 dark:text-gray-300 text-sm font-medium leading-normal border-l-4 border-green-500">3</td>
+<td class="h-[60px] px-4 py-2 text-gray-900 dark:text-white text-sm font-medium leading-normal flex items-center gap-3"><img alt="FC Barcelona logo" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9m2rE1v8KeiGEecQFjzBxm30Gklbw_1G6pIaDF15Kka5eFQf7jF9Md9ltFJLZvsYkf-DMqgHSn2mVek9coV78l1WOXxducFj-GMmFiCh0QTEjnTsns_9WLjIbhuetUDjY2950tCn6FBraHAUdS4jn9AvH3Ht6tqFgLzrWxVwTVLIWmvLpG5_CIVp18THCH-N56DiwG2yXVO8WnjzwsgJ1-FZNHVrEpquFV_VusjNkEYV4JNFfN_VGHDDEG0QNcuYi-zuC7_qUi1xX"/>FC Barcelona</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">7</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">3</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">0</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">22</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">12</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">24</td>
+</tr>
+<tr class="hover:bg-gray-100 dark:hover:bg-white/5">
+<td class="h-[60px] px-4 py-2 text-gray-800 dark:text-gray-300 text-sm font-medium leading-normal border-l-4 border-green-500">4</td>
+<td class="h-[60px] px-4 py-2 text-gray-900 dark:text-white text-sm font-medium leading-normal flex items-center gap-3"><img alt="Atlético de Madrid logo" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjKuxpPH_iujZsI-IZtQrPG0QDcWJnHg7bca0W66hyFbLJoZtf1kKZjvOuWkNQwv-m5yT4se3zEXLFLP7thl46QNfZgaudUIqWDklMQZAa-23n__oocngQ_e6q2Z3rMiCY0uC5qoun6fkaOxOUrYxJJI5qJslShHZJITugMSQNLTdS5IKgGJ1kEemjCsKczYVNJ_nJFpnfsdZStJPoUe-UjDuyiGoeouXy9K8JQItm8zUIB13N9hDa5rh2YB0v5_X6uths8xI1Q6uJ"/>Atlético de Madrid</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">9</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">7</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">1</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">1</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">23</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">8</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">15</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">22</td>
+</tr>
+<tr class="hover:bg-gray-100 dark:hover:bg-white/5">
+<td class="h-[60px] px-4 py-2 text-gray-800 dark:text-gray-300 text-sm font-medium leading-normal border-l-4 border-blue-500">5</td>
+<td class="h-[60px] px-4 py-2 text-gray-900 dark:text-white text-sm font-medium leading-normal flex items-center gap-3"><img alt="Real Sociedad logo" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVDK_wmYypqfZzfYS6s8v3yRX6FFoJb_MkS4iEl9paUerhtvYieHVo9HwMBMoD8iLE6g9e0e3d5Lv2DV4k53f7HvBtkuHg-AsSN4wUSHDPJP1pFGywznoYRZzPCxdJz49m2AtstHAMOrbvnBAC3MYXRkfLgDvbAlvAc6KRhvxIaXKtEveyWxf6hkFVG8UQq67fqIzn60JU81URZNUm1RUTeGpn8s3mZQkvOzl4_U6XC8G2mJi_46wpxF9M_yul74AfjNCHCqh91hHe"/>Real Sociedad</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">5</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">3</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">2</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">18</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">12</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">6</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">18</td>
+</tr>
+<tr class="hover:bg-gray-100 dark:hover:bg-white/5">
+<td class="h-[60px] px-4 py-2 text-gray-800 dark:text-gray-300 text-sm font-medium leading-normal border-l-4 border-orange-500">6</td>
+<td class="h-[60px] px-4 py-2 text-gray-900 dark:text-white text-sm font-medium leading-normal flex items-center gap-3"><img alt="Athletic Club logo" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkWVqJNYSLHv3lfAro5LPfv7LHiLX15EJEnBbPQpgxrh9jQBZucNv6QdoOEInD_c8v_Mr0FuZE8z_oJodnV4EPGWjWsG19UE3JDE1jkkDaONLzIAi4qHkW6Lrepu73jRrdNC1_607AISt6xHoOCNJbhQ9NNlNjHEIbj7dEJHCPkvfGPB4GvZWwuMye7OCKsuHRZ1lompKVZYIhgt_7wcL7D0VOjLD0R3qaGhpfD--y9lbIKwBLoDyNy4zbdVh4uuJzvFHkoL-viO1i"/>Athletic Club</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">5</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">2</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">3</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">16</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">6</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">17</td>
+</tr>
+<!-- ... more teams ... -->
+<tr class="hover:bg-gray-100 dark:hover:bg-white/5">
+<td class="h-[60px] px-4 py-2 text-gray-800 dark:text-gray-300 text-sm font-medium leading-normal border-l-4 border-transparent">17</td>
+<td class="h-[60px] px-4 py-2 text-gray-900 dark:text-white text-sm font-medium leading-normal flex items-center gap-3"><img alt="Deportivo Alavés logo" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpBLnT6Xri5fSXk-k-tcBVHPp5m_C1xdQsdqH0m1dBD4KIBW_TwCq5qCK_u6qKfF4tzagUqwKy0ODdr5wTgGYJWrf8eicHapUIl_3edfsT8Mjw9SWRhA6x_ItykieiznJsOzyLXKqCMcLb8mpRN4O3CaJ2GqfHJ9sZwq23YJgfUY-3m0NXD4HnfaL_fkvROhACZGAmL3LVxtRo3SsBv88A8E3NtD9Euh70LSe4RWTZFKPmqwu1rgKFsrJycScj3MPRKke1Xf9Y8nWM"/>Deportivo Alavés</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">2</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">2</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">6</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">8</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">15</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">-7</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">8</td>
+</tr>
+<tr class="hover:bg-gray-100 dark:hover:bg-white/5">
+<td class="h-[60px] px-4 py-2 text-gray-800 dark:text-gray-300 text-sm font-medium leading-normal border-l-4 border-red-500">18</td>
+<td class="h-[60px] px-4 py-2 text-gray-900 dark:text-white text-sm font-medium leading-normal flex items-center gap-3"><img alt="Celta de Vigo logo" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdi53ZgvVD3alBe49RkVEq3uxBElAnw_wQ24vF5Y7TKRxW76iBwhM2CQgJkx9maom0r_DTRcu_yKcQ8Z4sITHDn3qOuyq2hHr8WE9TR6HPG4G6uNFGEYGNHeueGsgy1gkvBALSSdHnOw1O7pxafYdg4Jpq3f4BWNP5gKPjk7XdBTdK-JYeryrfCkuxq4c0mjUaqJ9fp1GmLXAWJS9NPaHPXXcE88YrkZqAI4oBKzRdlymuzRZkKVtaprZXdnNaQKeGMGHUDPw9Th3m"/>Celta de Vigo</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">1</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">3</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">6</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">18</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">-8</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">6</td>
+</tr>
+<tr class="hover:bg-gray-100 dark:hover:bg-white/5">
+<td class="h-[60px] px-4 py-2 text-gray-800 dark:text-gray-300 text-sm font-medium leading-normal border-l-4 border-red-500">19</td>
+<td class="h-[60px] px-4 py-2 text-gray-900 dark:text-white text-sm font-medium leading-normal flex items-center gap-3"><img alt="Granada CF logo" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLLSxKJ_A2wt4w0-mefUfIRRyZ0IjBqluVN7z7SDAJMvcHH7i4qQYVhf_crehvoMup3F-D9r5dgXHPpTZr6U5YI3zh-iVeWwPTyMGOa_kARSSKWRCkf6xqlVdkyeYErZhbmDvZaPeX0IvaU3sc8XkuPkTOKp0DHj_OxERr0EaVpciktVVUqsfnrNhXvbvX3JreCPDyemfulZ22v9mZEZNE2_rKw06KuP0NGIqnxf1YcOW6SndwS-UZle3p1WDOQHwP6O73N5VG21rF"/>Granada CF</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">1</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">3</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">6</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">15</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">25</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">-10</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">6</td>
+</tr>
+<tr class="hover:bg-gray-100 dark:hover:bg-white/5">
+<td class="h-[60px] px-4 py-2 text-gray-800 dark:text-gray-300 text-sm font-medium leading-normal border-l-4 border-red-500">20</td>
+<td class="h-[60px] px-4 py-2 text-gray-900 dark:text-white text-sm font-medium leading-normal flex items-center gap-3"><img alt="UD Almería logo" class="w-6 h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDiweQgA72iZtls3LGF7FmaRs6slenDbtA8D4nzYBe5Mn4pC83aY9iqAHpUEyW_rydlBoEt8lrnp4RRVq3y37B6pVAIq5HMabxBFh19l3h6jhP7Q1UWF2vcuummkwjLtvJBgnUTPQhlLl3b-e0h2FZp5kMsIvI1wBx5s7TvJV6HMt_OymRVaGCajGoO_mwF1Jp-Sl5Qf1hB-spI9DZ3Grzsh7eU0AIy9JePTMYPhsdDMxC3ShoKlLdyubdEyH5m1VaucRi0IyhQaGh"/>UD Almería</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">10</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">0</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">3</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">7</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">13</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">29</td>
+<td class="hidden sm:table-cell h-[60px] px-4 py-2 text-center text-gray-700 dark:text-gray-400 text-sm font-normal leading-normal">-16</td>
+<td class="h-[60px] px-4 py-2 text-center text-gray-900 dark:text-white text-sm font-bold leading-normal">3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+<div class="flex items-center gap-3">
+<div class="w-2 h-8 rounded-full bg-green-500"></div>
+<div class="flex flex-col">
+<p class="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal">Champions League</p>
+<p class="text-gray-600 dark:text-gray-400 text-xs font-normal leading-normal">Top 4 teams qualify</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-8 rounded-full bg-blue-500"></div>
+<div class="flex flex-col">
+<p class="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal">Europa League</p>
+<p class="text-gray-600 dark:text-gray-400 text-xs font-normal leading-normal">5th place qualifies</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-8 rounded-full bg-orange-500"></div>
+<div class="flex flex-col">
+<p class="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal">Conference League</p>
+<p class="text-gray-600 dark:text-gray-400 text-xs font-normal leading-normal">6th place qualifies</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-8 rounded-full bg-red-500"></div>
+<div class="flex flex-col">
+<p class="text-gray-800 dark:text-gray-200 text-sm font-medium leading-normal">Relegation</p>
+<p class="text-gray-600 dark:text-gray-400 text-xs font-normal leading-normal">Bottom 3 teams</p>
+</div>
+</div>
+</div>
+</main>
+<footer class="flex flex-col gap-6 px-5 py-10 text-center @container mt-12 border-t border-gray-200 dark:border-gray-800">
+<div class="flex flex-wrap items-center justify-center gap-6 @[480px]:flex-row @[480px]:justify-around">
+<a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary text-base font-normal leading-normal min-w-40" href="#">About Us</a>
+<a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary text-base font-normal leading-normal min-w-40" href="#">Contact</a>
+<a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary text-base font-normal leading-normal min-w-40" href="#">Privacy Policy</a>
+<a class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary text-base font-normal leading-normal min-w-40" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a aria-label="Facebook" class="text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" href="#">
+<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path></svg>
+</a>
+<a aria-label="Twitter" class="text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" href="#">
+<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+</a>
+<a aria-label="Instagram" class="text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" href="#">
+<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.147 2 12.315 2zm-1.161 1.043c-1.06.048-1.656.21-2.19.423a3.873 3.873 0 00-1.388.948 3.873 3.873 0 00-.948 1.388c-.213.534-.375 1.13-.423 2.19-.048 1.02-.06 1.358-.06 3.61s.012 2.59.06 3.61c.048 1.06.21 1.656.423 2.19.227.562.534 1.025.948 1.44a3.873 3.873 0 001.44.948c.534.213 1.13.375 2.19.423 1.02.048 1.358.06 3.61.06s2.59-.012 3.61-.06c1.06-.048 1.656-.21 2.19-.423.562-.227 1.025-.534 1.44-.948a3.873 3.873 0 00.948-1.44c.213-.534.375-1.13.423-2.19.048-1.02.06-1.358.06-3.61s-.012-2.59-.06-3.61c-.048-1.06-.21-1.656-.423-2.19a3.873 3.873 0 00-.948-1.44 3.873 3.873 0 00-1.44-.948c-.534-.213-1.13-.375-2.19-.423-1.02-.048-1.358-.06-3.61-.06s-2.59.012-3.61.06zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 1.802a3.333 3.333 0 110 6.666 3.333 3.333 0 010-6.666zm5.338-3.205a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z" fill-rule="evenodd"></path></svg>
+</a>
+</div>
+<p class="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal">© 2023 La Liga Predictions. All Rights Reserved.</p>
+</footer>
+</div>
+</div>
+</div>
+</div>
+<script src="/assets/app.js"></script>
+</body></html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Match Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#ec131e",
+              "background-light": "#f8f6f6",
+              "background-dark": "#221011",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full flex-col">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 flex items-center justify-center border-b border-solid border-white/10 bg-background-dark/80 backdrop-blur-sm">
+<div class="flex w-full max-w-7xl items-center justify-between whitespace-nowrap px-4 sm:px-6 lg:px-8 py-3">
+<div class="flex items-center gap-4 text-white">
+<div class="text-primary size-8">
+<svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">La Liga Predict</h2>
+</div>
+<div class="hidden md:flex flex-1 justify-center">
+<div class="flex items-center gap-9">
+<a class="text-white/70 hover:text-white text-sm font-medium leading-normal" href="#">Home</a>
+<a class="text-white text-sm font-medium leading-normal" href="#">Matches</a>
+<a class="text-white/70 hover:text-white text-sm font-medium leading-normal" href="#">Leagues</a>
+<a class="text-white/70 hover:text-white text-sm font-medium leading-normal" href="#">News</a>
+</div>
+</div>
+<div class="flex items-center justify-end gap-2">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Sign Up</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAxypB-5UyVka-7cLJOGnSglYgqf7rdz5VhFJtj-LaK5DMgbeorLbOOzX2eLkpHP3WlocSezlvELW-dSA4dXQCBEhaP4lmuoqQPMEMfZy14iaHH8wQE3B8Yz4zBEwo72nlkhWnaOdPaYButRO5pwnHuMA-uovVWYR1C5sEdJqt_ZyKNrCH2ETDKPE8sdUGY1YZhHNeDyJWN8wEN-CCpc73LLBjpdQYUFVR_qbyY_CC74J6mEP347EGE0yN7Pc18ncPq9e3UMX43tVsh");'></div>
+</div>
+</div>
+</header>
+<main class="w-full grow px-4 sm:px-6 lg:px-8 py-8">
+<div class="mx-auto max-w-7xl">
+<!-- Breadcrumbs -->
+<div class="flex flex-wrap gap-2 mb-4">
+<a class="text-white/60 hover:text-white text-sm font-medium leading-normal" href="#">Home</a>
+<span class="text-white/60 text-sm font-medium leading-normal">/</span>
+<a class="text-white/60 hover:text-white text-sm font-medium leading-normal" href="#">La Liga</a>
+<span class="text-white/60 text-sm font-medium leading-normal">/</span>
+<span class="text-white text-sm font-medium leading-normal">Real Madrid vs FC Barcelona</span>
+</div>
+<!-- Match Header -->
+<div class="flex flex-col items-center justify-center rounded-xl bg-white/5 p-6 md:p-8 mb-8 border border-white/10">
+<div class="flex w-full items-center justify-between gap-4 md:gap-8">
+<div class="flex flex-col items-center gap-3 w-1/3 text-center">
+<img class="h-16 w-16 md:h-24 md:w-24" data-alt="Real Madrid Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo7XwycjZrX57k1obY4riCa-l6jTp1Nawa95oR0D9QZ_6zpWvSXpAEel5dwL7ffl66lwMobzbMebUbq2VI1jlyKRbskC1Ra-L6Ouj48yxY27d66RSHpEcq51tnt3dj4oGOpr4JO1NFFyk9o6rQt6Z1_YMeDFMSPpMkeJH_CiFjmFL1jzHO0tCmT1LxKN19UI5figUhkISYdzzJRiYJk5amCzsGU9CCmEpiFTVNwO8NdsD6w2LLm0LBDkqLVA_9IVxMzD7H9Oj0TAft"/>
+<h2 class="text-white text-lg md:text-2xl font-bold">Real Madrid</h2>
+</div>
+<div class="flex flex-col items-center">
+<div class="text-4xl md:text-6xl font-bold text-white tracking-tight">3 - 1</div>
+<div class="text-white/60 text-xs md:text-sm mt-2">Finished</div>
+</div>
+<div class="flex flex-col items-center gap-3 w-1/3 text-center">
+<img class="h-16 w-16 md:h-24 md:w-24" data-alt="FC Barcelona Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmWw1X6r0p90MsMnKyx3OxcCVRgnrK4AbfkPAGvda1EKuqsGExJ1EWwD2fCRULZLdbdoTOM_6_3PxuR_YfJG3N13fIqikfdV5P3AmspE2abetUlbfcwCRrlOraYULn5qK-0HuD2062rW6pEKk6A0CLkMSYom1E7Tb7B85G1gE9KAX48vVRlP-NZS-amyALPP_x6PE2G7eGfYnGA8W048AnSeiXuH0F2VC9ei2RF4QVcAeSGRRlv6-2HhE5BEGocpTTGtIfGIu38tfR"/>
+<h2 class="text-white text-lg md:text-2xl font-bold">FC Barcelona</h2>
+</div>
+</div>
+<p class="text-white/60 text-sm font-normal leading-normal pt-6">La Liga - Santiago Bernabéu Stadium - 24 October 2024, 21:00</p>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Left Column -->
+<div class="col-span-12 lg:col-span-3">
+<div class="space-y-6">
+<!-- League Standing -->
+<div>
+<h3 class="text-lg font-bold text-white mb-4">League Standing</h3>
+<div class="rounded-lg bg-white/5 border border-white/10 p-4 space-y-3">
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2">
+<span class="font-bold text-white">1.</span>
+<img class="h-5 w-5" data-alt="Real Madrid Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_WwauXtOKcqJkwWMfOQfZSEgEL17lQ2uUY2xxSqhL97WrJCTZOAPyraM55LdASQmD5FDuO2OHv_Pl_do7agSloMArLmdxCWWHbih2dgX3gBhEZ986o04rOtjR0jCC5rPZzS-vt4oFWp0QHq9uWBJVhnmV9G9d8IRWTBJTmM4lyccVfzUCwT6dTXpeQM7Xthe9gSn5M-Hd51JqceF9Ko-B5jgY5VBJuuyMEBeoRxW29cgIFdZYWYIhY97ASBkiFy96wyZ_U8gg9310"/>
+<span class="text-white">Real Madrid</span>
+</div>
+<span class="text-white/70">78 pts</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2">
+<span class="font-bold text-white">2.</span>
+<img class="h-5 w-5" data-alt="FC Barcelona Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVeXvG8tC_QbrgkIZcGzVs8j2ibkMbq1sYWua3QD-PXGDo88SPdEV4BbosA3XQ079DbWDcJ-JhRSHbN1CWfwXacg1reWh4jieBiF_-P9DcmU3cVweH9YWbQ-1vmpFCoJmF11ieEEY7WwR4uYtCtM54HbHrRtPqa7D3nahpTgvOQBh8ci3k6m3pSlm9Ac7O20emfyCK77GdqqbFsuSN3hUjF6Y7VcNgRt19f_d5pRL-BufDPsti4NDaUHl54saVJ6veAgu_iHCrDoCa"/>
+<span class="text-white">FC Barcelona</span>
+</div>
+<span class="text-white/70">70 pts</span>
+</div>
+</div>
+</div>
+<!-- Recent Form -->
+<div>
+<h3 class="text-lg font-bold text-white mb-4">Recent Form</h3>
+<div class="rounded-lg bg-white/5 border border-white/10 p-4 space-y-4">
+<div>
+<p class="text-white text-sm font-medium mb-2">Real Madrid</p>
+<div class="flex gap-2">
+<span class="flex items-center justify-center size-7 rounded-full bg-green-500 text-white font-bold text-xs">W</span>
+<span class="flex items-center justify-center size-7 rounded-full bg-green-500 text-white font-bold text-xs">W</span>
+<span class="flex items-center justify-center size-7 rounded-full bg-gray-500 text-white font-bold text-xs">D</span>
+<span class="flex items-center justify-center size-7 rounded-full bg-green-500 text-white font-bold text-xs">W</span>
+<span class="flex items-center justify-center size-7 rounded-full bg-red-500 text-white font-bold text-xs">L</span>
+</div>
+</div>
+<div>
+<p class="text-white text-sm font-medium mb-2">FC Barcelona</p>
+<div class="flex gap-2">
+<span class="flex items-center justify-center size-7 rounded-full bg-green-500 text-white font-bold text-xs">W</span>
+<span class="flex items-center justify-center size-7 rounded-full bg-red-500 text-white font-bold text-xs">L</span>
+<span class="flex items-center justify-center size-7 rounded-full bg-green-500 text-white font-bold text-xs">W</span>
+<span class="flex items-center justify-center size-7 rounded-full bg-green-500 text-white font-bold text-xs">W</span>
+<span class="flex items-center justify-center size-7 rounded-full bg-gray-500 text-white font-bold text-xs">D</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Column (Center) -->
+<div class="col-span-12 lg:col-span-6">
+<div class="flex border-b border-white/10 mb-6">
+<button class="px-4 py-3 text-sm font-semibold text-white border-b-2 border-primary">Summary</button>
+<button class="px-4 py-3 text-sm font-semibold text-white/60 hover:text-white">Stats</button>
+<button class="px-4 py-3 text-sm font-semibold text-white/60 hover:text-white">Head-to-Head</button>
+<button class="px-4 py-3 text-sm font-semibold text-white/60 hover:text-white">Lineups</button>
+</div>
+<!-- Prediction Odds Card -->
+<div class="rounded-xl bg-white/5 border border-white/10 p-6 mb-8 text-center">
+<h3 class="text-lg font-bold text-white mb-4">Match Prediction</h3>
+<div class="grid grid-cols-3 gap-4">
+<div class="flex flex-col items-center p-3 rounded-lg bg-white/5">
+<p class="text-white/70 text-sm">Real Madrid Win</p>
+<p class="text-3xl font-bold text-white mt-1">45%</p>
+</div>
+<div class="flex flex-col items-center p-3 rounded-lg bg-primary/20 border-2 border-primary">
+<p class="text-white/70 text-sm">Draw</p>
+<p class="text-3xl font-bold text-white mt-1">20%</p>
+</div>
+<div class="flex flex-col items-center p-3 rounded-lg bg-white/5">
+<p class="text-white/70 text-sm">Barcelona Win</p>
+<p class="text-3xl font-bold text-white mt-1">35%</p>
+</div>
+</div>
+<button class="mt-6 w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] mx-auto">
+<span class="truncate">Place your prediction</span>
+</button>
+</div>
+<!-- Match Stats -->
+<div>
+<h3 class="text-lg font-bold text-white mb-4">Match Statistics</h3>
+<div class="rounded-lg bg-white/5 border border-white/10 p-4 space-y-4">
+<!-- Stat Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center text-sm font-medium text-white/80 px-1">
+<span>52%</span>
+<span>Ball Possession</span>
+<span>48%</span>
+</div>
+<div class="flex w-full h-2 bg-white/10 rounded-full overflow-hidden">
+<div class="bg-white" style="width: 52%"></div>
+<div class="bg-primary" style="width: 48%"></div>
+</div>
+</div>
+<!-- Stat Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center text-sm font-medium text-white/80 px-1">
+<span>14</span>
+<span>Total Shots</span>
+<span>9</span>
+</div>
+<div class="flex w-full h-2 bg-white/10 rounded-full overflow-hidden">
+<div class="bg-white" style="width: 60.8%"></div>
+<div class="bg-primary" style="width: 39.2%"></div>
+</div>
+</div>
+<!-- Stat Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center text-sm font-medium text-white/80 px-1">
+<span>7</span>
+<span>Shots on Target</span>
+<span>3</span>
+</div>
+<div class="flex w-full h-2 bg-white/10 rounded-full overflow-hidden">
+<div class="bg-white" style="width: 70%"></div>
+<div class="bg-primary" style="width: 30%"></div>
+</div>
+</div>
+<!-- Stat Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center text-sm font-medium text-white/80 px-1">
+<span>6</span>
+<span>Corners</span>
+<span>4</span>
+</div>
+<div class="flex w-full h-2 bg-white/10 rounded-full overflow-hidden">
+<div class="bg-white" style="width: 60%"></div>
+<div class="bg-primary" style="width: 40%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column -->
+<div class="col-span-12 lg:col-span-3">
+<h3 class="text-lg font-bold text-white mb-4">Comments</h3>
+<div class="rounded-lg bg-white/5 border border-white/10 p-4">
+<!-- Submit Comment Form -->
+<div class="flex items-start gap-3 mb-6">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Current user avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAksViZtcFreSMSjvjbuxehRQ7fn_nFpoyHlCAOXvbq_OzrhOITLks6jsqjj6N0olC2ntRgRhGHsV2zJzmY3Zjm6O83CtV_agDLTlQWImiC3MQMgoKtXYlJpv2wLQD3EL2f-vpZaqYbqMMOhnr1zQY4bwktSHeQpM2YEenjXXYsk8_H5_KSnnyaHBx1WgWlV2ck2VrCCyxvsHmgrdkTH6aQj4MfprgQ8jqcpoEP0o3M9wg3_CchsAi0BEq165c0qqVe47Fo_vD9at08");'></div>
+<div class="flex-1">
+<textarea class="w-full bg-white/5 border-white/20 rounded-lg text-white text-sm focus:ring-primary focus:border-primary" placeholder="Add a comment..." rows="2"></textarea>
+<button class="mt-2 w-full flex min-w-[84px] items-center justify-center rounded-lg h-9 px-3 bg-primary text-white text-sm font-bold">
+<span>Post Comment</span>
+</button>
+</div>
+</div>
+<!-- Comments Feed -->
+<div class="space-y-5">
+<!-- Comment Item -->
+<div class="flex items-start gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 shrink-0" data-alt="Commenter avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCCGmH0t9Z4XLv6mqD4xHZdvAf4znk7hc5mZcBnzINay7PThz7IfzdOSxbOjY8Pab1aj2n0PD7WqkP9paJulr_z2ril_RHTnqhFbYgl0SbMpebfh1ZzzPhxJKdCBdxcBvP6y74nuwS3JwpTrBvqtbvahRg2535JBc-Eb3RD-QNDQ2MLaNiPJ47XWgmTAMkm2x9TSv7SXs8GoPyA8-trm27E5cncO1u6UcVoFVZZF14Wnn81fkj_Q7vs77Bay9ZTPPmSv2kMi2_qUEuk");'></div>
+<div>
+<div class="flex items-center gap-2">
+<p class="text-sm font-semibold text-white">Alex Johnson</p>
+<p class="text-xs text-white/50">2 hours ago</p>
+</div>
+<p class="text-sm text-white/80 mt-1">Hala Madrid! Easy win today, Bellingham is on fire. Barcelona has no chance.</p>
+</div>
+</div>
+<!-- Comment Item -->
+<div class="flex items-start gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 shrink-0" data-alt="Commenter avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAYy9wLaavWagqqjEnBliYhs2HXOFvwUHpIS-yyi0kzbwtRn9oEf3Ljcw7g01GXC5_Qd8vL4n7ouKhiytYK7KWZg9f8viT8bVsRw1Kfa0XvqLBDDbSIv-EUtR1MMZhHBeQiIc_P7uSPtaUvwKPXyAlHDVzcYHZCiNxh4AKoNJyZYah2GuRaRi4OO1eaprhzG1ODtiJKfivbSsmhuF89j_N1a3aRPN3G0Ie4OLpU8o0JWITaAQp14Ju2UMWAggQAChopqKQAZFsL0iil");'></div>
+<div>
+<div class="flex items-center gap-2">
+<p class="text-sm font-semibold text-white">Maria Garcia</p>
+<p class="text-xs text-white/50">1 hour ago</p>
+</div>
+<p class="text-sm text-white/80 mt-1">Don't be so sure, Alex. Barça's young squad is hungry. I predict a 2-2 draw, it will be a tight match!</p>
+</div>
+</div>
+<!-- Comment Item -->
+<div class="flex items-start gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 shrink-0" data-alt="Commenter avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCwB33vzG6K0pJNbbP4jzbI5snL8teT4x_KWFFf40dA_Qb878dnNIWm3xq3wWH0n9rpW_luxhiRsjt-8wnT2MFNuCGWxDXLvLS7B4_EPAQbu8B_5KutONGPo6NhG5jH1MNVhgalZVsP4rCni9JU4IFic04kUAQAWkGgMJTZ6HaBEyvxdy1OSAem82G_I90px570YL6OdmGZXdYDyaWfuLI2AsSEnBYkS5fURWGhL_Nr4ZqykpfLkOYKeH86ZuEngvPFTW522ZWBohAC");'></div>
+<div>
+<div class="flex items-center gap-2">
+<p class="text-sm font-semibold text-white">Carlos Mendes</p>
+<p class="text-xs text-white/50">30 minutes ago</p>
+</div>
+<p class="text-sm text-white/80 mt-1">This prediction of 45% for Madrid seems low. At home they are unbeatable. I'd say it's closer to 60%.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script src="/assets/app.js"></script>
+</body></html>
