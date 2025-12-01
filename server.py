@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, List, Dict, Any, Union
 from datetime import datetime, timedelta
-from jose import JWTError, jwt
+import jwt
 from passlib.context import CryptContext
 import pandas as pd
 import subprocess
@@ -38,8 +38,9 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+# Prefer a pure-Python compatible scheme first to avoid C-extension/bcrypt issues in some envs
+pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 
 # In-memory data stores (replace with database in production)
 fake_users_db = {}
@@ -67,6 +68,7 @@ assets_dir = os.path.join(frontend_dir, 'public', 'assets')
 
 # Serve frontend files
 if os.path.isdir(frontend_dir):
+    # Keep a static mount for direct asset loads, but also serve individual pages via routes below
     app.mount("/static", StaticFiles(directory=frontend_dir, html=True), name="static")
 
 # Serve assets
@@ -100,6 +102,11 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+
+class AuthRequest(BaseModel):
+    username: str
+    password: str
 
 class Team(BaseModel):
     id: str
@@ -204,12 +211,65 @@ class ConnectionManager:
 # Initialize WebSocket manager
 manager = ConnectionManager()
 
+
+async def compute_and_broadcast_loop(interval_seconds: int = 15):
+    """Background task that computes a simple leaderboard and broadcasts it via WebSocket."""
+    while True:
+        try:
+            # Build leaderboard from fake_users_db
+            entries: List[LeaderboardEntry] = []
+            i = 1
+            for username, u in fake_users_db.items():
+                points = int(u.get('points', 0)) if u.get('points', None) is not None else (1000 - i*10)
+                entry = LeaderboardEntry(user_id=u.get('id', str(uuid.uuid4())), username=u.get('username', username), total_points=points, correct_predictions=int(u.get('correct_predictions', 0)), position=i)
+                entries.append(entry)
+                i += 1
+            # sort by points desc
+            entries = sorted(entries, key=lambda e: e.total_points, reverse=True)
+            # assign positions
+            for idx, e in enumerate(entries, start=1):
+                e.position = idx
+            # broadcast
+            await manager.broadcast_leaderboard(entries)
+        except Exception as e:
+            print(f"Error in leaderboard loop: {e}")
+        await asyncio.sleep(interval_seconds)
+
+
+@app.on_event('startup')
+async def _startup_tasks():
+    # start background broadcaster
+    loop = asyncio.get_event_loop()
+    loop.create_task(compute_and_broadcast_loop(15))
+    # Create a default test user (do not run hashing at import-time)
+    if not fake_users_db:
+        try:
+            hashed_password = get_password_hash("test123")
+        except Exception as e:
+            print(f"Warning: password hashing failed during startup: {e}. Using plain fallback for test user.")
+            hashed_password = "test123"
+        fake_users_db["testuser"] = {
+            "username": "testuser",
+            "email": "test@example.com",
+            "full_name": "Test User",
+            "hashed_password": hashed_password,
+            "disabled": False,
+            "id": str(uuid.uuid4())
+        }
+
 # Helper functions
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except Exception:
+        # Fallback: if hashed_password is plain text (startup fallback), compare directly
+        try:
+            return plain_password == hashed_password
+        except Exception:
+            return False
 
 def get_user(db, username: str):
     if username in db:
@@ -238,12 +298,29 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
-    except JWTError:
+    except jwt.InvalidTokenError:
         raise credentials_exception
     user = get_user(fake_users_db, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
+
+
+@app.post('/api/auth/token', response_model=Token)
+def token_endpoint(auth: AuthRequest):
+    user = get_user(fake_users_db, auth.username)
+    if not user:
+        raise HTTPException(status_code=401, detail='Incorrect username or password')
+    # verify password with passlib; fallback to plaintext equality if verify fails
+    try:
+        ok = verify_password(auth.password, user.hashed_password)
+    except Exception:
+        ok = (auth.password == user.hashed_password)
+    if not ok:
+        raise HTTPException(status_code=401, detail='Incorrect username or password')
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
+    return {"access_token": access_token, "token_type": "bearer"}
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
     if current_user.disabled:
@@ -309,6 +386,14 @@ async def get_user_profile(user_id: str):
             return user
     raise HTTPException(status_code=404, detail="User not found")
 
+
+@app.get('/api/users', response_model=List[UserBase])
+async def list_users():
+    users = []
+    for username, u in fake_users_db.items():
+        users.append(UserBase(username=u.get('username', username), email=u.get('email','')))
+    return users
+
 # Match Endpoints
 @app.get("/api/matches/upcoming", response_model=List[Match])
 async def get_upcoming_matches(limit: int = 10):
@@ -339,14 +424,49 @@ async def get_user_predictions(user_id: str):
 # Leaderboard Endpoints
 @app.get("/api/leaderboard", response_model=List[LeaderboardEntry])
 async def get_leaderboard():
-    # In a real app, this would calculate leaderboard from the database
-    return []
+    # Return latest cached leaderboard if present, else compute a simple leaderboard from users
+    if manager.leaderboard_cache:
+        return manager.leaderboard_cache
+    # compute a simple leaderboard from fake_users_db
+    entries: List[LeaderboardEntry] = []
+    i = 1
+    for username, u in fake_users_db.items():
+        entry = LeaderboardEntry(
+            user_id=u.get('id', str(uuid.uuid4())),
+            username=u.get('username', username),
+            total_points=int(u.get('points', 0)) if u.get('points', None) is not None else (1000 - i*10),
+            correct_predictions=int(u.get('correct_predictions', 0)),
+            position=i
+        )
+        entries.append(entry)
+        i += 1
+    # cache and return
+    await manager.broadcast_leaderboard(entries)
+    return entries
 
 # Teams Endpoints
 @app.get("/api/teams", response_model=List[Team])
 async def get_teams():
-    # In a real app, this would query your database
-    return []
+    # Provide teams list from logos/ slug_map if possible
+    teams = []
+    logos_dir = os.path.join(frontend_dir, 'public', 'assets', 'logos') if os.path.isdir(os.path.join(frontend_dir, 'public', 'assets')) else os.path.join(frontend_dir, 'public', 'assets', 'logos')
+    # Try to read slug_map.json for friendly names
+    slug_map_path = os.path.join(logos_dir, 'slug_map.json')
+    if os.path.exists(slug_map_path):
+        try:
+            with open(slug_map_path, 'r', encoding='utf-8') as f:
+                sm = json.load(f)
+                for team_name, slug in sm.items():
+                    teams.append(Team(id=slug, name=team_name, short_name=team_name, logo_url=f'/assets/logos/{slug}.svg'))
+        except Exception:
+            pass
+    # fallback: use files in logos dir
+    if not teams and os.path.isdir(logos_dir):
+        for fn in os.listdir(logos_dir):
+            if fn.lower().endswith('.svg') or fn.lower().endswith('.png'):
+                slug = os.path.splitext(fn)[0]
+                teams.append(Team(id=slug, name=slug.replace('-', ' ').title(), short_name=slug, logo_url=f'/assets/logos/{fn}'))
+    return teams
 
 @app.get("/api/teams/{team_id}", response_model=Team)
 async def get_team(team_id: str):
@@ -356,24 +476,55 @@ async def get_team(team_id: str):
 # Standings Endpoints
 @app.get("/api/standings", response_model=List[Standing])
 async def get_standings():
-    # In a real app, this would query your database
-    return []
+    # Return latest cached standings for default season if present
+    default_season = '2024-2025'
+    data = read_cached_standings(default_season)
+    if not data:
+        return []
+    return data
 
 # Code Editor Endpoints
 @app.get("/api/editor/problems", response_model=List[CodeProblem])
 async def get_code_problems():
-    # In a real app, this would query your database
-    return []
+    # Return a couple of sample problems for the editor
+    sample = [
+        CodeProblem(
+            id='sum-1',
+            title='Sum Two Numbers',
+            description='Read two integers and print their sum.',
+            difficulty='easy',
+            starter_code='a = int(input())\nb = int(input())\n# print(sum)',
+            test_cases=[{'input': '1\n2\n', 'output': '3\n'}]
+        ),
+        CodeProblem(
+            id='factorial-1',
+            title='Factorial',
+            description='Compute factorial of n (n<=10).',
+            difficulty='medium',
+            starter_code='n = int(input())\n# compute factorial',
+            test_cases=[{'input': '5\n', 'output': '120\n'}]
+        )
+    ]
+    return sample
 
 @app.post("/api/editor/execute", response_model=CodeExecutionResult)
 async def execute_code(submission: CodeSubmission):
-    # In a real app, this would execute the code in a sandbox
-    return {
-        "success": True,
-        "output": "Execution result would appear here",
-        "test_cases_passed": 0,
-        "total_test_cases": 0
-    }
+    # Execute submitted python code in a subprocess with timeout.
+    if submission.language and submission.language.lower() != 'python':
+        return CodeExecutionResult(success=False, output='', test_cases_passed=0, total_test_cases=0, error='Only python execution is supported in this demo')
+    import tempfile
+    try:
+        with tempfile.NamedTemporaryFile('w', suffix='.py', delete=False, encoding='utf-8') as tf:
+            tf.write(submission.code)
+            tmp_path = tf.name
+        # Run code with a timeout
+        proc = subprocess.run(['python', tmp_path], capture_output=True, text=True, timeout=6)
+        out = (proc.stdout or '') + (proc.stderr or '')
+        return CodeExecutionResult(success=(proc.returncode==0), output=out, test_cases_passed=0, total_test_cases=0)
+    except subprocess.TimeoutExpired:
+        return CodeExecutionResult(success=False, output='', test_cases_passed=0, total_test_cases=0, error='Execution timed out')
+    except Exception as e:
+        return CodeExecutionResult(success=False, output='', test_cases_passed=0, total_test_cases=0, error=str(e))
 
 # WebSocket Endpoint
 @app.websocket("/ws/leaderboard")
@@ -391,7 +542,34 @@ async def websocket_endpoint(websocket: WebSocket):
 # Root endpoint
 @app.get("/")
 async def root():
-    return FileResponse(os.path.join(frontend_dir, 'index.html'))
+    # Serve the main index from the Frontend directory
+    fp = os.path.join(frontend_dir, 'Index.html')
+    if os.path.exists(fp):
+        return FileResponse(fp, media_type='text/html')
+    # fallback
+    return HTMLResponse("<h1>LaLiga Predictor</h1>", status_code=200)
+
+
+@app.get('/{filename}')
+async def serve_frontend_file(filename: str):
+    # Avoid catching API or assets routes
+    if filename.startswith('api') or filename.startswith('assets') or filename.startswith('static') or filename.startswith('ws'):
+        raise HTTPException(status_code=404, detail='Not Found')
+    # Normalize filenames for known pages
+    safe_names = ['Index.html','Leaderboard.html','Match_detail.html','Standings.html','Teams.html','user_profile.html','Match_detail']
+    # Allow requests like /Index.html or /index.html
+    candidate = filename
+    if not candidate.lower().endswith('.html'):
+        candidate = candidate + ('.html' if not '.' in filename else '')
+    # Search case-insensitively in frontend_dir
+    for f in os.listdir(frontend_dir):
+        if f.lower() == candidate.lower() or f.lower() == filename.lower():
+            return FileResponse(os.path.join(frontend_dir, f), media_type='text/html')
+    # If not found, return index to let SPA router handle paths
+    fp = os.path.join(frontend_dir, 'Index.html')
+    if os.path.exists(fp):
+        return FileResponse(fp, media_type='text/html')
+    raise HTTPException(status_code=404, detail='Page not found')
 
 # Handle 404 for SPA routing
 @app.exception_handler(404)
@@ -401,10 +579,11 @@ async def custom_404_handler(request: Request, exc: HTTPException):
             status_code=404,
             content={"detail": "Not Found"}
         )
-    return FileResponse(
-        os.path.join(frontend_dir, 'index.html'),
-        status_code=200
-    )
+        # For non-API paths, return SPA index
+        fp = os.path.join(frontend_dir, 'Index.html')
+        if os.path.exists(fp):
+            return FileResponse(fp, status_code=200)
+        return HTMLResponse('<h1>Not Found</h1>', status_code=404)
 
 # Health check endpoint
 @app.get("/health")
@@ -422,18 +601,7 @@ async def internal_server_error_handler(request: Request, exc: HTTPException):
         content={"detail": "Internal Server Error"}
     )
 
-# Add a simple test user for development
-if not fake_users_db:
-    hashed_password = get_password_hash("test123")
-    fake_users_db["testuser"] = {
-        "username": "testuser",
-        "email": "test@example.com",
-        "full_name": "Test User",
-        "hashed_password": hashed_password,
-        "disabled": False,
-        "id": str(uuid.uuid4())
-    }
-        return []
+# (test users will be created at startup)
 
 def read_cached_standings(season: str):
     path = f'data/standings_{season}.json'
@@ -454,11 +622,7 @@ def cache_standings(season: str, data: dict):
     except Exception as e:
         print(f"Error caching standings: {e}")
 
-# Add the main entry point for running the server
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
-    return None
+# (Older main block removed) server entrypoint provided at bottom of file
 
 def cache_standings(season: str, data):
     path = f'data/standings_{season}.json'

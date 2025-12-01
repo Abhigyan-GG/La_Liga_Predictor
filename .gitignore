@@ -1,3 +1,5 @@
 DEEP_DIVE.md
 LaLiga-Predictor-Onboarding-Brief.pdf
 node_modules/
+.gitignore
+venv/

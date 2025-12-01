@@ -132,6 +132,102 @@ document.addEventListener('DOMContentLoaded', function () {
 
   loadStandingsIfPresent();
 
+  // Leaderboard: connect to WebSocket and update table/podium if present
+  function initLeaderboardWebSocket() {
+    if (!window.location.pathname.toLowerCase().includes('leaderboard')) return;
+    const proto = (location.protocol === 'https:') ? 'wss' : 'ws';
+    const wsUrl = `${proto}://${location.host}/ws/leaderboard`;
+    try {
+      const ws = new WebSocket(wsUrl);
+      ws.addEventListener('open', () => console.log('Leaderboard WS connected'));
+      ws.addEventListener('message', (ev) => {
+        try {
+          const msg = JSON.parse(ev.data);
+          if (msg.type === 'leaderboard_update' && Array.isArray(msg.data)) {
+            renderLeaderboard(msg.data);
+          }
+        } catch (e) { console.warn('Invalid WS message', e); }
+      });
+      ws.addEventListener('close', () => console.log('Leaderboard WS closed'));
+    } catch (e) {
+      console.warn('WS not available', e);
+    }
+  }
+
+  function renderLeaderboard(data) {
+    // Podium selectors
+    const podiumNames = [data[0]?.username || '', data[1]?.username || '', data[2]?.username || ''];
+    const podiumPoints = [data[0]?.total_points || '', data[1]?.total_points || '', data[2]?.total_points || ''];
+    // Update podium cards if present
+    document.querySelectorAll('[data-podium-name]').forEach((el, i) => { if (data[i]) el.textContent = data[i].username; });
+    document.querySelectorAll('[data-podium-points]').forEach((el, i) => { if (data[i]) el.textContent = data[i].total_points; });
+
+    // Update table body
+    const tbody = document.querySelector('tbody');
+    if (!tbody) return;
+    // keep header row if sticky by checking first child
+    const rows = data.map((r, idx) => {
+      return `\n<tr class="border-b border-black/10 dark:border-white/10">\n<td class="p-4 font-medium text-black/60 dark:text-white/60">${r.position}</td>\n<td class="p-4"><div class="flex items-center gap-3"><div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style="background-image: url('/assets/logos/${r.username.replace(/\s+/g,'-').toLowerCase()}.svg')"></div><span class="font-medium text-black dark:text-white">${r.username}</span></div></td>\n<td class="p-4 font-medium text-black dark:text-white text-right">${r.total_points}</td>\n<td class="p-4 text-black/80 dark:text-white/80 text-center hidden sm:table-cell">${r.accuracy || ''}%</td>\n<td class="p-4 text-center hidden sm:table-cell">${r.change || ''}</td>\n</tr>`;
+    }).join('\n');
+    tbody.innerHTML = rows;
+  }
+
+  initLeaderboardWebSocket();
+
+  // Auth forms handling on user_profile page
+  function initAuthForms() {
+    const authSection = document.getElementById('auth-section');
+    if (!authSection) return;
+    const tabLogin = document.getElementById('auth-tab-login');
+    const tabReg = document.getElementById('auth-tab-register');
+    const loginForm = document.getElementById('login-form');
+    const regForm = document.getElementById('register-form');
+    const loginMsg = document.getElementById('login-msg');
+    const regMsg = document.getElementById('reg-msg');
+
+    function showLogin() { loginForm.classList.remove('hidden'); regForm.classList.add('hidden'); tabLogin.classList.add('bg-primary','text-white'); tabReg.classList.remove('bg-primary','text-white'); }
+    function showReg() { regForm.classList.remove('hidden'); loginForm.classList.add('hidden'); tabReg.classList.add('bg-primary','text-white'); tabLogin.classList.remove('bg-primary','text-white'); }
+
+    tabLogin.addEventListener('click', showLogin);
+    tabReg.addEventListener('click', showReg);
+
+    document.getElementById('login-submit').addEventListener('click', async () => {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      loginMsg.textContent = '';
+      if (!username || !password) { loginMsg.textContent = 'Enter username and password'; return; }
+      try {
+        const resp = await fetch('/api/auth/token', {method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({username, password})});
+        if (!resp.ok) {
+          const txt = await resp.text(); loginMsg.textContent = `Login failed: ${txt}`; return;
+        }
+        const data = await resp.json();
+        localStorage.setItem('access_token', data.access_token || data.accessToken || '');
+        loginMsg.textContent = 'Login successful';
+        setTimeout(()=>{ location.reload(); }, 800);
+      } catch (e) { loginMsg.textContent = 'Login error: '+e.message; }
+    });
+
+    document.getElementById('reg-submit').addEventListener('click', async () => {
+      const username = document.getElementById('reg-username').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+      regMsg.textContent = '';
+      if (!username || !email || !password) { regMsg.textContent = 'Fill all fields'; return; }
+      try {
+        const resp = await fetch('/api/auth/register', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, email, password})});
+        if (!resp.ok) { regMsg.textContent = 'Register failed'; return; }
+        const user = await resp.json();
+        regMsg.textContent = 'Account created — signing in...';
+        // auto-login
+        const tokenResp = await fetch('/api/auth/token', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, password})});
+        if (tokenResp.ok) { const tok = await tokenResp.json(); localStorage.setItem('access_token', tok.access_token || tok.accessToken || ''); setTimeout(()=>location.reload(),800); }
+      } catch (e) { regMsg.textContent = 'Register error: '+e.message; }
+    });
+  }
+
+  initAuthForms();
+
   // Match detail: fetch prediction if query params provided
   async function loadMatchPredictionIfPresent() {
     if (!window.location.pathname.toLowerCase().includes('match_detail')) return;

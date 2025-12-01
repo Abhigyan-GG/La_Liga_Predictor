@@ -108,6 +108,49 @@
 <!-- Main Content -->
 <main class="flex-1">
 <div class="flex flex-col gap-6">
+<!-- Auth Section -->
+<div id="auth-section" class="p-4 rounded-lg bg-white dark:bg-white/5 border border-black/5 dark:border-white/10">
+    <div class="flex items-center gap-4 mb-4">
+        <button id="auth-tab-login" class="px-4 py-2 rounded-md bg-primary text-white">Login</button>
+        <button id="auth-tab-register" class="px-4 py-2 rounded-md">Register</button>
+    </div>
+    <div id="auth-forms">
+        <form id="login-form" class="space-y-3">
+            <div>
+                <label class="text-sm text-black/60 dark:text-white/60">Username</label>
+                <input id="login-username" class="w-full mt-1 p-2 rounded border" />
+            </div>
+            <div>
+                <label class="text-sm text-black/60 dark:text-white/60">Password</label>
+                <input id="login-password" type="password" class="w-full mt-1 p-2 rounded border" />
+            </div>
+            <div>
+                <button id="login-submit" type="button" class="px-4 py-2 rounded bg-primary text-white">Sign In</button>
+            </div>
+            <div id="login-msg" class="text-sm mt-2"></div>
+        </form>
+
+        <form id="register-form" class="space-y-3 hidden">
+            <div>
+                <label class="text-sm text-black/60 dark:text-white/60">Username</label>
+                <input id="reg-username" class="w-full mt-1 p-2 rounded border" />
+            </div>
+            <div>
+                <label class="text-sm text-black/60 dark:text-white/60">Email</label>
+                <input id="reg-email" type="email" class="w-full mt-1 p-2 rounded border" />
+            </div>
+            <div>
+                <label class="text-sm text-black/60 dark:text-white/60">Password</label>
+                <input id="reg-password" type="password" class="w-full mt-1 p-2 rounded border" />
+            </div>
+            <div>
+                <button id="reg-submit" type="button" class="px-4 py-2 rounded bg-primary text-white">Create Account</button>
+            </div>
+            <div id="reg-msg" class="text-sm mt-2"></div>
+        </form>
+    </div>
+</div>
+
 <!-- PageHeading -->
 <div class="flex flex-wrap justify-between items-center gap-3">
 <p class="text-black dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">My Predictions</p>
