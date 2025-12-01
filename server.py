@@ -1,60 +1,438 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, Body
-from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
+from fastapi import FastAPI, UploadFile, File, HTTPException, Body, WebSocket, WebSocketDisconnect, Depends, status, Request
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional, List, Dict, Any, Union
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 import pandas as pd
 import subprocess
 import os
 import json
-from typing import Optional
 import requests
 from bs4 import BeautifulSoup
 import threading
 import time
 import pickle
-from utils.feature_engineer import FeatureEngineer
+import uvicorn
+import asyncio
+from typing import Set
+from enum import Enum
+import uuid
+import json
+from pathlib import Path
 
-app = FastAPI(title="LaLiga Predictor Server")
+# Import ML-related utilities
+try:
+    from utils.feature_engineer import FeatureEngineer
+except ImportError:
+    print("Warning: FeatureEngineer not found. Some ML features may not work.")
+    FeatureEngineer = None
 
-# Allow CORS for local dev
+# Security settings
+SECRET_KEY = "your-secret-key-here"  # Change this to a secure secret key in production
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+# Password hashing
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# In-memory data stores (replace with database in production)
+fake_users_db = {}
+active_connections: Dict[str, WebSocket] = {}
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="LaLiga Predictor Server",
+    description="Backend API for LaLiga Predictor application",
+    version="1.0.0"
+)
+
+# CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # In production, replace with your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount static directories: frontend and data
+# Mount static directories
+frontend_dir = 'Frontend' if os.path.isdir('Frontend') else 'frontend'
+assets_dir = os.path.join(frontend_dir, 'public', 'assets')
 
-# Mount lowercase `frontend` if present (legacy)
-if os.path.isdir('frontend'):
-    app.mount('/', StaticFiles(directory='frontend', html=True), name='frontend')
+# Serve frontend files
+if os.path.isdir(frontend_dir):
+    app.mount("/static", StaticFiles(directory=frontend_dir, html=True), name="static")
 
-# Mount the `Frontend` directory (capitalized) used in this workspace
-if os.path.isdir('Frontend'):
-    app.mount('/', StaticFiles(directory='Frontend', html=True), name='Frontend')
+# Serve assets
+if os.path.isdir(assets_dir):
+    app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
-# Assets: prefer `Frontend/public/assets` if present
-if os.path.isdir('Frontend/public/assets'):
-    app.mount('/assets', StaticFiles(directory='Frontend/public/assets'), name='assets')
-elif os.path.isdir('frontend/public/assets'):
-    app.mount('/assets', StaticFiles(directory='frontend/public/assets'), name='assets')
-
+# Serve data directory
 if os.path.isdir('data'):
     app.mount('/data', StaticFiles(directory='data'), name='data')
 
+# Data Models
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: Optional[str] = None
 
-def read_predictions_csv(path='data/future_predictions.csv'):
+class UserCreate(UserBase):
+    password: str
+
+class UserInDB(UserBase):
+    hashed_password: str
+    disabled: bool = False
+
+class User(UserBase):
+    id: str
+    disabled: bool = False
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+
+class Team(BaseModel):
+    id: str
+    name: str
+    short_name: str
+    logo_url: Optional[str] = None
+    founded: Optional[int] = None
+    stadium: Optional[str] = None
+    manager: Optional[str] = None
+
+class Match(BaseModel):
+    id: str
+    home_team: str
+    away_team: str
+    date: datetime
+    competition: str = "La Liga"
+    matchday: int
+    status: str  # scheduled, in_play, finished
+    home_score: Optional[int] = None
+    away_score: Optional[int] = None
+
+class Prediction(BaseModel):
+    id: str
+    user_id: str
+    match_id: str
+    home_score: int
+    away_score: int
+    points: Optional[int] = 0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Standing(BaseModel):
+    position: int
+    team: str
+    played: int
+    won: int
+    drawn: int
+    lost: int
+    goals_for: int
+    goals_against: int
+    goal_difference: int
+    points: int
+    form: Optional[str] = None
+
+class LeaderboardEntry(BaseModel):
+    user_id: str
+    username: str
+    total_points: int
+    correct_predictions: int
+    position: int
+
+class CodeProblem(BaseModel):
+    id: str
+    title: str
+    description: str
+    difficulty: str
+    starter_code: str
+    test_cases: List[Dict[str, Any]]
+
+class CodeSubmission(BaseModel):
+    code: str
+    language: str = "python"
+    problem_id: str
+
+class CodeExecutionResult(BaseModel):
+    success: bool
+    output: str
+    test_cases_passed: int
+    total_test_cases: int
+    error: Optional[str] = None
+
+# WebSocket Manager
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: Dict[str, WebSocket] = {}
+        self.leaderboard_cache = []
+
+    async def connect(self, websocket: WebSocket, client_id: str):
+        await websocket.accept()
+        self.active_connections[client_id] = websocket
+        # Send current leaderboard on connect
+        if self.leaderboard_cache:
+            await self.send_leaderboard_update(websocket)
+
+    def disconnect(self, client_id: str):
+        if client_id in self.active_connections:
+            del self.active_connections[client_id]
+
+    async def send_leaderboard_update(self, websocket: WebSocket):
+        await websocket.send_json({
+            "type": "leaderboard_update",
+            "data": [entry.dict() for entry in self.leaderboard_cache]
+        })
+
+    async def broadcast_leaderboard(self, leaderboard_data: List[LeaderboardEntry]):
+        self.leaderboard_cache = leaderboard_data
+        for connection in self.active_connections.values():
+            try:
+                await self.send_leaderboard_update(connection)
+            except Exception as e:
+                print(f"Error broadcasting to WebSocket: {e}")
+
+# Initialize WebSocket manager
+manager = ConnectionManager()
+
+# Helper functions
+def get_password_hash(password: str) -> str:
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        token_data = TokenData(username=username)
+    except JWTError:
+        raise credentials_exception
+    user = get_user(fake_users_db, username=token_data.username)
+    if user is None:
+        raise credentials_exception
+    return user
+
+async def get_current_active_user(current_user: User = Depends(get_current_user)):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+def read_predictions_csv(path='data/future_predictions.csv') -> List[Dict]:
     if not os.path.exists(path):
         return []
     try:
         df = pd.read_csv(path)
-        # convert to records and replace NaN
+        # Convert to records and replace NaN
         records = df.fillna('').to_dict(orient='records')
         return records
-    except Exception:
+    except Exception as e:
+        print(f"Error reading predictions CSV: {e}")
+        return []
+
+# Authentication Endpoints
+@app.post("/api/auth/register", response_model=User)
+async def register_user(user: UserCreate):
+    if user.username in fake_users_db:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already registered"
+        )
+    
+    hashed_password = get_password_hash(user.password)
+    user_id = str(uuid.uuid4())
+    user_dict = user.dict()
+    user_dict["id"] = user_id
+    user_dict["hashed_password"] = hashed_password
+    del user_dict["password"]
+    
+    fake_users_db[user.username] = user_dict
+    return user_dict
+
+@app.post("/api/auth/login", response_model=Token)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = get_user(fake_users_db, form_data.username)
+    if not user or not verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/api/auth/me", response_model=User)
+async def read_users_me(current_user: User = Depends(get_current_active_user)):
+    return current_user
+
+# User Endpoints
+@app.get("/api/users/{user_id}", response_model=User)
+async def get_user_profile(user_id: str):
+    for username, user in fake_users_db.items():
+        if user["id"] == user_id:
+            return user
+    raise HTTPException(status_code=404, detail="User not found")
+
+# Match Endpoints
+@app.get("/api/matches/upcoming", response_model=List[Match])
+async def get_upcoming_matches(limit: int = 10):
+    # In a real app, this would query your database
+    return []
+
+@app.get("/api/matches/{match_id}", response_model=Match)
+async def get_match_details(match_id: str):
+    # In a real app, this would query your database
+    return {"id": match_id, "home_team": "Team A", "away_team": "Team B", "date": datetime.utcnow(), "status": "scheduled"}
+
+# Prediction Endpoints
+@app.post("/api/predictions", response_model=Prediction)
+async def create_prediction(
+    prediction: Prediction, 
+    current_user: User = Depends(get_current_active_user)
+):
+    # In a real app, this would save to a database
+    prediction.id = str(uuid.uuid4())
+    prediction.user_id = current_user.id
+    return prediction
+
+@app.get("/api/predictions/user/{user_id}", response_model=List[Prediction])
+async def get_user_predictions(user_id: str):
+    # In a real app, this would query your database
+    return []
+
+# Leaderboard Endpoints
+@app.get("/api/leaderboard", response_model=List[LeaderboardEntry])
+async def get_leaderboard():
+    # In a real app, this would calculate leaderboard from the database
+    return []
+
+# Teams Endpoints
+@app.get("/api/teams", response_model=List[Team])
+async def get_teams():
+    # In a real app, this would query your database
+    return []
+
+@app.get("/api/teams/{team_id}", response_model=Team)
+async def get_team(team_id: str):
+    # In a real app, this would query your database
+    return {"id": team_id, "name": "Team Name", "short_name": "TNM"}
+
+# Standings Endpoints
+@app.get("/api/standings", response_model=List[Standing])
+async def get_standings():
+    # In a real app, this would query your database
+    return []
+
+# Code Editor Endpoints
+@app.get("/api/editor/problems", response_model=List[CodeProblem])
+async def get_code_problems():
+    # In a real app, this would query your database
+    return []
+
+@app.post("/api/editor/execute", response_model=CodeExecutionResult)
+async def execute_code(submission: CodeSubmission):
+    # In a real app, this would execute the code in a sandbox
+    return {
+        "success": True,
+        "output": "Execution result would appear here",
+        "test_cases_passed": 0,
+        "total_test_cases": 0
+    }
+
+# WebSocket Endpoint
+@app.websocket("/ws/leaderboard")
+async def websocket_endpoint(websocket: WebSocket):
+    client_id = str(uuid.uuid4())
+    await manager.connect(websocket, client_id)
+    try:
+        while True:
+            # Keep connection alive
+            await asyncio.sleep(10)
+            await websocket.send_json({"type": "ping"})
+    except WebSocketDisconnect:
+        manager.disconnect(client_id)
+
+# Root endpoint
+@app.get("/")
+async def root():
+    return FileResponse(os.path.join(frontend_dir, 'index.html'))
+
+# Handle 404 for SPA routing
+@app.exception_handler(404)
+async def custom_404_handler(request: Request, exc: HTTPException):
+    if request.url.path.startswith('/api'):
+        return JSONResponse(
+            status_code=404,
+            content={"detail": "Not Found"}
+        )
+    return FileResponse(
+        os.path.join(frontend_dir, 'index.html'),
+        status_code=200
+    )
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "timestamp": datetime.utcnow()}
+
+# Error handler for 500 errors
+@app.exception_handler(500)
+async def internal_server_error_handler(request: Request, exc: HTTPException):
+    import traceback
+    print(f"Internal Server Error: {exc}")
+    traceback.print_exc()
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error"}
+    )
+
+# Add a simple test user for development
+if not fake_users_db:
+    hashed_password = get_password_hash("test123")
+    fake_users_db["testuser"] = {
+        "username": "testuser",
+        "email": "test@example.com",
+        "full_name": "Test User",
+        "hashed_password": hashed_password,
+        "disabled": False,
+        "id": str(uuid.uuid4())
+    }
         return []
 
 def read_cached_standings(season: str):
@@ -63,8 +441,23 @@ def read_cached_standings(season: str):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 return json.load(f)
-        except Exception:
+        except Exception as e:
+            print(f"Error reading cached standings: {e}")
             return None
+
+def cache_standings(season: str, data: dict):
+    os.makedirs('data', exist_ok=True)
+    path = f'data/standings_{season}.json'
+    try:
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2)
+    except Exception as e:
+        print(f"Error caching standings: {e}")
+
+# Add the main entry point for running the server
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
     return None
 
 def cache_standings(season: str, data):
